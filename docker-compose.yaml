@@ -34,6 +34,15 @@ services:
             - MONGODB_INITIAL_PRIMARY_ROOT_PASSWORD=password123
             - MONGODB_REPLICA_SET_KEY=replicasetkey123
 
+    rabbitmq:
+        image: rabbitmq:3.9
+        environment:
+            - RABBITMQ_DEFAULT_USER=guest
+            - RABBITMQ_DEFAULT_PASS=guest
+        ports:
+            - '5672:5672'
+            - '15672:15672'
+
     # Services
     orders:
         build:
@@ -51,6 +60,21 @@ services:
             - .:/app
         ports:
             - '3000:3000'
+
+    billing:
+        build:
+            context: .
+            dockerfile: ./apps/billing/Dockerfile
+            target: development
+        command: npm run start:dev billing
+        env_file:
+            - ./apps/billing/.env
+        depends_on:
+            - mongodb-primary
+            - mongodb-secondary
+            - mongodb-arbiter
+        volumes:
+            - .:/app
 
 volumes:
     mongodb_master_data:
