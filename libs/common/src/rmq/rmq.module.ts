@@ -24,7 +24,7 @@ export class RmqModule {
                                 transport: Transport.RMQ,
                                 options: {
                                     urls: [configService.get<string>('RMQ_URI')],
-                                    queue: configService.get<string>(`RMQ_${name.toUpperCase()}_QUEUE`)
+                                    queue: configService.get<string>(`RMQ_${name}_QUEUE`)
                                 }
                             }
                         },

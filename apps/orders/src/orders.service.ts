@@ -5,6 +5,7 @@ import { Order } from './schemas/order.schema'
 import { BILLING_SERVICE } from './constants/services'
 import { ClientProxy } from '@nestjs/microservices'
 import { lastValueFrom } from 'rxjs'
+import { ClientSession } from 'mongoose'
 
 @Injectable()
 export class OrdersService {
@@ -13,15 +14,16 @@ export class OrdersService {
         @Inject(BILLING_SERVICE) private billingClient: ClientProxy
     ) {}
 
-    async createOrder(request: CreateOrderRequest) {
-        const session = await this.ordersRepository.startTransaction()
+    async createOrder(request: CreateOrderRequest): Promise<Order> {
+        const session: ClientSession = await this.ordersRepository.startTransaction()
         try {
-            const order = await this.ordersRepository.create(request, { session })
-            await lastValueFrom(this.billingClient.send('order_created', order))
+            const order: Order = await this.ordersRepository.create(request, { session })
+            await lastValueFrom(this.billingClient.emit('order_created', request))
             await session.commitTransaction()
 
             return order
         } catch (e) {
+            console.log(e)
             await session.abortTransaction()
             throw e
         }

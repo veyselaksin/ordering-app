@@ -2,11 +2,7 @@ import { Injectable } from '@nestjs/common'
 
 @Injectable()
 export class BillingService {
-    getHello(): string {
-        return 'Hello World!'
-    }
-
-    bill(data: Record<string, any>) {
-        console.log('BillingService: bill', data)
+    bill(data: Record<string, any>): void {
+        console.log('Billing: ', data)
     }
 }

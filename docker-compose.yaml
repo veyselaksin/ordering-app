@@ -35,7 +35,7 @@ services:
             - MONGODB_REPLICA_SET_KEY=replicasetkey123
 
     rabbitmq:
-        image: rabbitmq:3.9
+        image: rabbitmq:3-management
         environment:
             - RABBITMQ_DEFAULT_USER=guest
             - RABBITMQ_DEFAULT_PASS=guest
